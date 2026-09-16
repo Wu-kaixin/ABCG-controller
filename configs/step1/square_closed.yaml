@@ -1,0 +1,42 @@
+experiment:
+  name: step1_square_closed
+  seed: 0
+
+scenario:
+  type: square
+  name: square_closed
+  width: 12.0
+  height: 12.0
+  boundary: closed
+  openings: []
+
+crowd:
+  static: true
+  count: 80
+  controller_access_to_spawn_geometry: false
+  heterogeneity:
+    enabled: true
+    radius_mean: 0.20
+    radius_std: 0.015
+    radius_min: 0.17
+    radius_max: 0.23
+    preferred_speed_mean: 1.25
+    preferred_speed_std: 0.10
+    preferred_speed_min: 0.95
+    preferred_speed_max: 1.55
+    time_gap_mean: 1.00
+    time_gap_std: 0.08
+    time_gap_min: 0.80
+    time_gap_max: 1.20
+
+guides:
+  model: velocity_controlled
+  communication: global_unrestricted
+  sensing: global_step1
+
+future_interfaces:
+  wall_openings: reserved
+  dynamic_crowds: reserved
+  local_sensing: reserved
+  local_communication: reserved
+  distributed_group_assignment: reserved
