@@ -1,0 +1,67 @@
+{
+  "scope": "Two fixed closed Step-1 scenes; migration smoke benchmark only",
+  "python": "3.12.14",
+  "platform": "Linux",
+  "packages": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "shapely": "2.1.2",
+    "jupedsim": "1.4.2",
+    "pytest": "9.1.1",
+    "threadpoolctl": "3.6.0"
+  },
+  "runs": 20,
+  "successful": 20,
+  "workers": 9,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "scenes": {
+    "square": {
+      "runs": 10,
+      "converged": 10,
+      "swept_safety_passed": 10,
+      "max_tracking_rmse": 0.0015641377759764987
+    },
+    "rectangle": {
+      "runs": 10,
+      "converged": 10,
+      "swept_safety_passed": 10,
+      "max_tracking_rmse": 0.0016301052162071665
+    }
+  },
+  "validated_file_sha256": {
+    "configs/step1/rectangle.yaml": "e5a5a6823cbc5fe0bf67915686d1e15a592aed32ceae100e0b7341f2ea4ec569",
+    "configs/step1/square.yaml": "84633fed02fa2d3d9dc6150f624fe68e58b9472a8a26891b3d186c9e6aec5178",
+    "controller/__init__.py": "100b3bb721600046fae6e2fba0f7180d458bb20b2a281cafedc7bd87ccf10a5b",
+    "controller/abcg.py": "904f21ccb7151a2f2054f8c88b3efc08d257699708e1536387a8592e3b38d20c",
+    "controller/arclength.py": "7862577e825d10b0c7e8bfc5694ed6df5cae6be6e3adf25bcc46429b153f57ec",
+    "controller/assignment.py": "ff80706ba0e271e354757f318a1ab66739c858aea391546f32f616804acccf72",
+    "controller/boundary.py": "3efbd30c6f7cd5996bc9d79507da1fc2cc473b319b0627071100c618196f18aa",
+    "controller/common.py": "53a77be7b6e2dbaec5616a9297381d3abe126e2658192fba3360cae7d26ac360",
+    "controller/coverage.py": "d918328f971456e794eee75c57ca597797afc01bd88b59db9767a6582f6b1d75",
+    "controller/radial.py": "8c19f442fbd9f161de59855dfd1c90818df174297f1d7ab77726421c0fa11b8c",
+    "controller/resources.py": "102a64512dd5a3d5e82d5ff5439493f01d075e624425b4c511f7567a95573561",
+    "controller/safety.py": "7d0c9d9131d8c3e3f53c88640d5f210e7bd7de65700453528adc4fc3484a9b46",
+    "environment.py": "cfb9c6a66a1b5950e6c27a245a0f01c3369b46bbcbc701caea9b0dd5d59e5e56",
+    "interfaces.py": "be9ca54fd6b09b0c8744da8dc3cbd76ff80c0f266354a35ce5285fbf48f65c8d",
+    "run.py": "555e8d3f10cd86cad3f898be83f4c460068807fdf33394db201c5a624a830f6b",
+    "scene.py": "95bbf74368cf9b3977696cb47738023fb7dea48404bc995af3599779d1d94c4a",
+    "visualization.py": "9ef9f9586aacb04d522c01307d3f6a0ead44f9cf99d8796ee6b1066c871480d6"
+  },
+  "tests": {
+    "passed": 78,
+    "failed": 0,
+    "command": "python -m pytest -q"
+  },
+  "serial_parallel_seed0_identical": true
+}
