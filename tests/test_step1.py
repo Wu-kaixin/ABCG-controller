@@ -64,9 +64,10 @@ def test_filter_prevents_an_intermediate_guide_collision():
     people, room = np.array([[4., 4.]]), np.array([5., 5.])
     limits = Safety(.6, .6, .2, 2.)
     assert not is_safe(path_clearances(guides, guides+nominal, people, room), limits)
-    velocity = safe_velocity(guides, nominal, people, room, 1., limits)
-    assert is_safe(path_clearances(guides, guides+velocity, people, room), limits)
-    assert np.linalg.norm(velocity, axis=1).max() <= 2.+1e-9
+    result = safe_velocity(guides, nominal, people, room, 1., limits)
+    assert is_safe(path_clearances(guides, guides+result.velocity, people, room), limits)
+    assert np.linalg.norm(result.velocity, axis=1).max() <= 2.+1e-9
+    assert result.status == 'SOLVED'
 
 
 @pytest.mark.parametrize('name', ['square', 'rectangle'])
@@ -74,10 +75,12 @@ def test_default_scene_runs(tmp_path, name):
     metrics = experiment(ROOT/f'configs/step1/{name}.yaml', tmp_path/name, plots=False)
     assert metrics['success']
     assert metrics['crowd_static']
+    assert metrics['termination_status'] == 'SUCCESS'
+    assert all(metrics['criteria'].values())
     assert metrics['steps'] > 10
     assert metrics['tracking_rmse'] < .03
     trace = np.load(tmp_path/name/'trajectory.npz')
-    assert len(trace['guide_positions']) == len(trace['velocities'])+1
+    assert len(trace['positions']) == len(trace['safe_velocity'])+1
 
 
 @pytest.mark.parametrize('case,status', [('capacity', 'CAPACITY_SHORTFALL'), ('offset', 'OFFSET_INVALID'), ('timeout', 'TIMEOUT')])
@@ -90,7 +93,7 @@ def test_failure_states_remain_failures(tmp_path, case, status):
     else:
         cfg['simulation']['max_steps'] = 1
     result = experiment(write_config(tmp_path, cfg), tmp_path/'out', plots=False)
-    assert result['status'] == status
+    assert result['termination_status'] == status
     assert not result['success']
 
 

@@ -14,7 +14,7 @@ class Boundary:
     length: float
 
 
-def estimate_boundary(points, offset, spacing, room, wall_margin, crowd_distance):
+def estimate_boundary(points, offset, spacing, room, wall_margin, crowd_distance, radii=None):
     """Convex hull is the initial, conservative boundary model.
 
     Only observed pedestrian positions enter the estimator. The deployment
@@ -25,10 +25,17 @@ def estimate_boundary(points, offset, spacing, room, wall_margin, crowd_distance
         raise ValueError('BOUNDARY_INVALID: need at least three finite observed points')
     if not np.isfinite(offset) or offset <= 0 or not np.isfinite(spacing) or spacing <= 0:
         raise ValueError('Offset and sample spacing must be positive')
-    hull = MultiPoint(points).convex_hull
+    radii = np.zeros(len(points)) if radii is None else np.asarray(radii, dtype=float)
+    if radii.shape != (len(points),) or np.any(radii < 0) or not np.isfinite(radii).all():
+        raise ValueError('BOUNDARY_INVALID: radii must be finite and nonnegative')
+    # Buffer each observed centre by its physical radius before the conservative
+    # convex envelope.  This never reads the generator's spawn polygon.
+    occupied = [Point(p).buffer(float(r), quad_segs=32) for p, r in zip(points, radii)]
+    hull = MultiPoint(points).convex_hull if not np.any(radii) else Polygon(
+        MultiPoint(np.vstack([np.asarray(g.exterior.coords) for g in occupied])).convex_hull.exterior)
     if hull.geom_type != 'Polygon' or hull.area <= 1e-10:
         raise ValueError('BOUNDARY_INVALID: observed positions are degenerate')
-    polygon = orient(hull.buffer(offset, quad_segs=16), sign=1)
+    polygon = orient(hull.buffer(offset, quad_segs=32), sign=1)
     line = polygon.exterior
     count = max(32, int(np.ceil(line.length / spacing)))
     deployment = np.array([line.interpolate(i*line.length/count).coords[0] for i in range(count)])
