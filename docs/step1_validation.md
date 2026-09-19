@@ -4,18 +4,18 @@
 
 ## 冻结前检查
 
-- 测试：27/27 PASS。
+- 测试：28/28 PASS。
 - 11 场景 × 4 方法 × 2 协议 × seed 0 smoke：88/88 completed，0 experiment error，59 SUCCESS、13 `PLAN_SEARCH_EXHAUSTED`、8 `CAPACITY_SHORTFALL`、8 `OFFSET_INVALID`。
 - 两个确定性失败夹具的 16 个任务全部命中预先规定原因；随机方法失败被保留，没有删 seed 或放宽阈值。
 - 从保存轨迹独立重评估：88/88 与原始 success 一致。
 
-smoke 结果位于本地 `results/closure-smoke-v2/`，提交内摘要为 `experiments/smoke_summary.json`。开发 seeds 0–29 和最终未用于调参的 seeds 30–129 矩阵将在代码冻结后运行；运行前本报告保持 **PARTIAL**，不预写 CLOSED。
+smoke 结果位于本地 `results/closure-smoke-v2/`，提交内摘要为 `experiments/smoke_summary.json`。开发 seeds 0–29 已完成；升级后的最终盲验证使用未用于调参或旧验证的 seeds 130–229。该矩阵完成前本报告保持 **PARTIAL**，不预写 CLOSED。
 
 首次冻结后的 development 运行出现 192 个 JuPedSim `AgentNumberError` experiment error。失败结果保留在 `results/closure-development/`；修复将已知生成人群容量失败转换为带 traceback cause 的结构化 `INITIALIZATION_INVALID`，同时为初始化失败增加 request hash resume 和回归测试。依照冻结协议，旧轮不被覆盖，代码版本升级后使用新目录重跑。
 
 修复后的 `results/closure-development-v2/` 共 2176 个任务：2176 completed、0 experiment error、1630 SUCCESS、338 PLAN_SEARCH_EXHAUSTED、192 INITIALIZATION_INVALID、8 CAPACITY_SHORTFALL、8 OFFSET_INVALID；2176/2176 离线重评估一致。development 中 square 的 12 个随机规划失败表明“所有随机 square seed 必须成功”是未经证明的假设，因此在查看最终 seeds 之前将该随机预期改为不预设结果；确定性 square seed 0 仍由测试严格要求 SUCCESS，失败夹具预期不变。算法、阈值和 final seeds 均未据此调整。
 
-首次 final 运行完成 7216 个任务且 7216 个离线重评估一致，但在文档收口前新增的强制停滞验收发现进展量使用总剩余路径、容差却是单 guide 单位，可能让多 guide 的极慢运动掩盖停滞。该轮保留于 `results/closure-validation/` 并标记为失效验证；修复改用 active guide 平均剩余路径进展，新增实际触发“路径重算→重分配→优先级让行→耗尽”的集成测试。最终结论必须来自升级版本的新目录。
+首次 final（seeds 30–129）运行完成 7216 个任务且 7216 个离线重评估一致，但在文档收口前新增的强制停滞验收发现进展量使用总剩余路径、容差却是单 guide 单位，可能让多 guide 的极慢运动掩盖停滞。该轮保留于 `results/closure-validation/` 并标记为失效验证；修复改用 active guide 平均剩余路径进展，新增实际触发“路径重算→重分配→优先级让行→耗尽”的集成测试。根据冻结纪律，修复后不复用已看过的 30–129，最终盲验证升级为未使用的 seeds 130–229，并输出到新目录。
 
 ## G1–G12 当前状态
 
@@ -38,8 +38,8 @@ smoke 结果位于本地 `results/closure-smoke-v2/`，提交内摘要为 `exper
 
 ```powershell
 python experiments/validation_runner.py --output results/development --phase development --workers auto
-python experiments/validation_runner.py --output results/validation --phase validation --workers auto
-python experiments/validation_runner.py --output results/validation --reevaluate
+python experiments/validation_runner.py --output results/closure-validation-v2 --phase validation --workers auto
+python experiments/validation_runner.py --output results/closure-validation-v2 --reevaluate
 ```
 
 最终结论将在上述结果完成后由实际 `summary.json` 更新。若任务中断，可对同一目录增加 `--resume`；hash 不一致或结果不完整时不会静默跳过。

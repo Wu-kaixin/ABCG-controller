@@ -1,7 +1,7 @@
 schema_version: 2
 frozen_protocol:
   development_seeds: [0, 29]
-  validation_seeds: [30, 129]
+  validation_seeds: [130, 229]
   methods: [equal_arc, average_cvt, mass_cvt, distmesh]
   protocols: [fixed_n, adaptive_resource]
 gates:

@@ -12,14 +12,14 @@
 
 ## 当前证据检查点
 
-- 单元/集成/反例测试：27/27 PASS。
+- 单元/集成/反例测试：28/28 PASS。
 - manifest smoke：88/88 completed，0 experiment error，88/88 expected status 命中；59 SUCCESS、13 PLAN_SEARCH_EXHAUSTED、8 CAPACITY_SHORTFALL、8 OFFSET_INVALID。
 - smoke 离线重评估：88/88 与原始 success 判定一致。
 - 首次 development 矩阵保留在 `results/closure-development/`：2176 中 192 个 JuPedSim `AgentNumberError` 被 runner 正确记为 EXPERIMENT_ERROR，暴露初始化依赖异常未结构化的问题；修复后该异常统一为 `INITIALIZATION_INVALID`，并增加回归测试。该失败轮不作为最终证据。
 - 修复后的 development-v2：2176/2176 completed、0 experiment error；1630 SUCCESS、338 PLAN_SEARCH_EXHAUSTED、192 INITIALIZATION_INVALID、8 CAPACITY_SHORTFALL、8 OFFSET_INVALID；2176/2176 离线重评估一致。随机 square 的 12 个真实规划失败说明不能预设所有随机 seed 成功，因此在最终验证前删除该过强预期，未改算法参数或阈值。
 - 首次 final 矩阵虽 7216/7216 完成且重评估一致，但随后新增的强制停滞反例发现 supervisor 将所有 guide 的路径进展总和与单 guide 容差比较，可能掩盖停滞。该轮保留在 `results/closure-validation/` 但作废；实现改为 active guide 平均剩余路径进展，并把完整三阶段恢复及耗尽加入测试，升级后重跑。
 - smoke 证据目录：`results/closure-smoke-v2/`（gitignore 下的本地结果）；可提交摘要为 `experiments/smoke_summary.json`。
-- 开发矩阵与最终 seeds 30–129 矩阵的结论记录在 `docs/step1_validation.md`；在最终矩阵完成前状态仍为 PARTIAL。
+- 开发矩阵与最终未使用 seeds 130–229 矩阵的结论记录在 `docs/step1_validation.md`；在升级后的最终矩阵完成前状态仍为 PARTIAL。
 
 ## Schema 与限制
 
