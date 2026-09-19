@@ -2,7 +2,7 @@
 
 **Adaptive Guide-Agent Deployment for Unknown Dynamic Crowds**
 
-当前实现并严格评价 Step 1：在封闭场地中，围绕一个静态、未知轮廓的人群部署外部引导代理。人群不受引导代理影响；观测为全局快照，通信不受限。验收结论只以 `docs/step1_validation.md` 中冻结矩阵的实际结果为准。
+当前实现并严格评价 Step 1：在封闭场地中，围绕一个静态、未知轮廓的人群部署外部引导代理。人群不受引导代理影响；观测为全局快照，通信不受限。冻结的 Step 1 范围已完成闭环并标记为 **CLOSED**；验收结论、证据与边界以 `docs/step1_validation.md` 为准。
 
 ## 项目结构
 

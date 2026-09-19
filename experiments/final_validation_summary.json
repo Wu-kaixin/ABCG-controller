@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "status": "CLOSED",
+  "scope": "frozen_step1",
+  "validated_at": "2026-09-19",
+  "branch": "codex/step1-closure",
+  "validated_commit": "c9d751684f3981c4539efdf430fd9f4cbf953e19",
+  "dirty": false,
+  "manifest_sha256": "b87a4735aad4aff4040e069c6db64020d2c7ba641351000599b895bd823c3eef",
+  "source_sha256": "945f842557b277ae6e516eec528282d0a1fe4be4f586d8eafa0da3bf6195a408",
+  "result_schema_version": "1.1.0",
+  "result_directory": "results/closure-validation-v3",
+  "seed_range": [230, 329],
+  "tests": {
+    "passed": 29,
+    "total": 29
+  },
+  "validation": {
+    "tasks": 7216,
+    "completed": 7216,
+    "experiment_errors": 0,
+    "expectations_met": 7216,
+    "successful": 5342,
+    "termination_counts": {
+      "SUCCESS": 5342,
+      "PLAN_SEARCH_EXHAUSTED": 1151,
+      "INITIALIZATION_INVALID": 696,
+      "CAPACITY_SHORTFALL": 16,
+      "OFFSET_INVALID": 8,
+      "PATH_UNREACHABLE": 3
+    }
+  },
+  "offline_reevaluation": {
+    "runs": 7216,
+    "consistent": 7216
+  },
+  "audit": {
+    "missing_task_hashes": 0,
+    "net_clearance_below_negative_tolerance": 0,
+    "numeric_tolerance": 1e-7,
+    "provenance_values_unique": true
+  },
+  "success_by_method": {
+    "average_cvt": {"successful": 1615, "runs": 1804},
+    "distmesh": {"successful": 968, "runs": 1804},
+    "equal_arc": {"successful": 1623, "runs": 1804},
+    "mass_cvt": {"successful": 1136, "runs": 1804}
+  },
+  "success_by_protocol": {
+    "adaptive_resource": {"successful": 2752, "runs": 3608},
+    "fixed_n": {"successful": 2590, "runs": 3608}
+  },
+  "limitations": [
+    "static crowd",
+    "global snapshot observation",
+    "known closed environment",
+    "centralized communication",
+    "no claim of global optimality or arbitrary-initial-state reachability"
+  ]
+}
