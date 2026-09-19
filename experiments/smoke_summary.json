@@ -1,0 +1,17 @@
+{
+  "schema_version": 2,
+  "manifest_sha256": "93739fb3225c36e64887ab24cff00884869bf5dec4e38672d46517e279d201cb",
+  "result_path": "results/closure-smoke-v2",
+  "tasks": 88,
+  "completed": 88,
+  "experiment_errors": 0,
+  "expectations_met": 88,
+  "successful": 59,
+  "termination_counts": {
+    "SUCCESS": 59,
+    "PLAN_SEARCH_EXHAUSTED": 13,
+    "CAPACITY_SHORTFALL": 8,
+    "OFFSET_INVALID": 8
+  },
+  "reevaluation": {"runs": 88, "consistent": 88}
+}

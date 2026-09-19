@@ -11,7 +11,7 @@ from controller.coverage import plan_coverage
 from controller.safety import Safety, is_safe, path_clearances, safe_velocity
 from environment import Environment
 from interfaces import Observation
-from run import experiment, load_config
+from run import experiment, load_config, reevaluate_result
 from scene import build_scene
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,9 +64,10 @@ def test_filter_prevents_an_intermediate_guide_collision():
     people, room = np.array([[4., 4.]]), np.array([5., 5.])
     limits = Safety(.6, .6, .2, 2.)
     assert not is_safe(path_clearances(guides, guides+nominal, people, room), limits)
-    velocity = safe_velocity(guides, nominal, people, room, 1., limits)
-    assert is_safe(path_clearances(guides, guides+velocity, people, room), limits)
-    assert np.linalg.norm(velocity, axis=1).max() <= 2.+1e-9
+    result = safe_velocity(guides, nominal, people, room, 1., limits)
+    assert is_safe(path_clearances(guides, guides+result.velocity, people, room), limits)
+    assert np.linalg.norm(result.velocity, axis=1).max() <= 2.+1e-9
+    assert result.status == 'SOLVED'
 
 
 @pytest.mark.parametrize('name', ['square', 'rectangle'])
@@ -74,10 +75,12 @@ def test_default_scene_runs(tmp_path, name):
     metrics = experiment(ROOT/f'configs/step1/{name}.yaml', tmp_path/name, plots=False)
     assert metrics['success']
     assert metrics['crowd_static']
+    assert metrics['termination_status'] == 'SUCCESS'
+    assert all(metrics['criteria'].values())
     assert metrics['steps'] > 10
     assert metrics['tracking_rmse'] < .03
     trace = np.load(tmp_path/name/'trajectory.npz')
-    assert len(trace['guide_positions']) == len(trace['velocities'])+1
+    assert len(trace['positions']) == len(trace['safe_velocity'])+1
 
 
 @pytest.mark.parametrize('case,status', [('capacity', 'CAPACITY_SHORTFALL'), ('offset', 'OFFSET_INVALID'), ('timeout', 'TIMEOUT')])
@@ -90,7 +93,7 @@ def test_failure_states_remain_failures(tmp_path, case, status):
     else:
         cfg['simulation']['max_steps'] = 1
     result = experiment(write_config(tmp_path, cfg), tmp_path/'out', plots=False)
-    assert result['status'] == status
+    assert result['termination_status'] == status
     assert not result['success']
 
 
@@ -119,3 +122,29 @@ def test_repeatability_and_output_protection(tmp_path):
     with pytest.raises(FileExistsError):
         experiment(ROOT/'configs/step1/square.yaml', path, plots=False)
     assert (path/'existing').read_text() == 'keep'
+
+
+def test_initialization_failure_is_structured(tmp_path):
+    cfg=config(); cfg['crowd']['radius']['min']=-1
+    output=tmp_path/'invalid'
+    result=experiment(write_config(tmp_path,cfg),output,plots=False)
+    assert result['termination_status']=='INITIALIZATION_INVALID'
+    assert result['failure_stage']=='initialization'
+    assert not result['success']
+    assert {'metrics.json','trajectory.npz','state.json'} <= {p.name for p in output.iterdir()}
+    assert (output/'state.json').read_text().find('completed')>=0
+
+
+def test_fixed_n_resume_hash_and_saved_trajectory_reevaluation(tmp_path):
+    output=tmp_path/'fixed'
+    first=experiment(ROOT/'configs/step1/square.yaml',output,plots=False,
+                     protocol='fixed_n',fixed_n=20,method='equal_arc')
+    assert first['success'] and first['active_guides']==20
+    resumed=experiment(ROOT/'configs/step1/square.yaml',output,plots=False,
+                       protocol='fixed_n',fixed_n=20,method='equal_arc',resume=True)
+    assert resumed['task_sha256']==first['task_sha256']
+    reevaluated=reevaluate_result(output)
+    assert reevaluated['success']==first['success']
+    with pytest.raises(FileExistsError,match='hash-mismatched'):
+        experiment(ROOT/'configs/step1/square.yaml',output,seed=1,plots=False,
+                   protocol='fixed_n',fixed_n=20,method='equal_arc',resume=True)

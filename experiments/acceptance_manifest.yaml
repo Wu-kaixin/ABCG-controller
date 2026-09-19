@@ -1,0 +1,31 @@
+schema_version: 2
+frozen_protocol:
+  development_seeds: [0, 29]
+  validation_seeds: [30, 129]
+  methods: [equal_arc, average_cvt, mass_cvt, distmesh]
+  protocols: [fixed_n, adaptive_resource]
+gates:
+  G1: {required: true, evidence: [pyproject.toml, run.py]}
+  G2: {required: true, tests: [tests/test_step1.py, tests/test_acceptance.py]}
+  G3: {required: true, tests: [tests/test_step1.py, tests/test_acceptance.py]}
+  G4: {required: true, tests: [tests/test_acceptance.py]}
+  G5: {required: true, tests: [tests/test_acceptance.py]}
+  G6: {required: true, tests: [tests/test_step1.py, tests/test_acceptance.py]}
+  G7: {required: true, tests: [tests/test_acceptance.py]}
+  G8: {required: true, tests: [tests/test_acceptance.py]}
+  G9: {required: true, tests: [tests/test_acceptance.py]}
+  G10: {required: true, tests: [tests/test_step1.py]}
+  G11: {required: true, runner: experiments/validation_runner.py}
+  G12: {required: true, evidence: [docs/step1_theory.md]}
+scenarios:
+  - {name: square, config: configs/step1/square.yaml, fixed_n: 24, stochastic: true, expected_statuses: [SUCCESS]}
+  - {name: rectangle, config: configs/step1/rectangle.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
+  - {name: elongated, config: configs/step1/scenarios/elongated.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
+  - {name: ellipse, config: configs/step1/scenarios/ellipse.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
+  - {name: concave_points, config: configs/step1/scenarios/concave_points.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
+  - {name: off_center, config: configs/step1/scenarios/off_center.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
+  - {name: high_demand_side, config: configs/step1/scenarios/high_demand_side.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
+  - {name: near_wall_feasible, config: configs/step1/scenarios/near_wall_feasible.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
+  - {name: near_wall_invalid, config: configs/step1/scenarios/near_wall_invalid.yaml, fixed_n: 24, stochastic: false, expected_statuses: [OFFSET_INVALID]}
+  - {name: insufficient_guides, config: configs/step1/scenarios/insufficient_guides.yaml, fixed_n: 24, stochastic: false, expected_statuses: [CAPACITY_SHORTFALL]}
+  - {name: opposite_side, config: configs/step1/scenarios/opposite_side.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}

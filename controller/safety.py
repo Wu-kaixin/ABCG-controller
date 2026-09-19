@@ -1,5 +1,6 @@
 """Velocity projection and independent checks of the executed straight segments."""
 from dataclasses import dataclass
+from time import perf_counter
 
 import numpy as np
 
@@ -10,6 +11,19 @@ class Safety:
     crowd_distance: float
     wall_distance: float
     max_speed: float
+    numeric_tolerance: float = 1e-7
+
+
+@dataclass(frozen=True)
+class SafetyResult:
+    velocity: np.ndarray
+    status: str
+    residual: float
+    iterations: int
+    correction_norm: float
+    min_predicted_clearance: float
+    solve_time: float
+    fallback_used: bool
 
 
 def path_clearances(start, end, people, room):
@@ -28,9 +42,10 @@ def path_clearances(start, end, people, room):
 
 
 def is_safe(clearances, limits):
-    return (clearances['crowd'] >= limits.crowd_distance-1e-7
-            and clearances['walls'] >= limits.wall_distance-1e-7
-            and (clearances['guides'] is None or clearances['guides'] >= limits.guide_distance-1e-7))
+    tol = limits.numeric_tolerance
+    return (clearances['crowd'] >= limits.crowd_distance-tol
+            and clearances['walls'] >= limits.wall_distance-tol
+            and (clearances['guides'] is None or clearances['guides'] >= limits.guide_distance-tol))
 
 
 def safe_velocity(positions, nominal, people, room, dt, limits):
@@ -39,7 +54,10 @@ def safe_velocity(positions, nominal, people, room, dt, limits):
     The filter is a numerical feasibility method. If convergence is not reached,
     the caller stops the episode explicitly. Initial safety is checked separately.
     """
-    n = len(positions)
+    started = perf_counter(); n = len(positions)
+    initial = path_clearances(positions, positions, people, room)
+    if not is_safe(initial, limits):
+        raise ValueError('INITIALIZATION_INVALID: current state violates safety distances')
     rows, bounds = [], []
 
     def add(i, normal, bound, j=None):
@@ -78,7 +96,7 @@ def safe_velocity(positions, nominal, people, room, dt, limits):
     bounds = np.asarray(bounds)
     vector = nominal.ravel().copy()
     corrections = np.zeros((len(rows)+n, 2*n))
-    for _ in range(200):
+    for iteration in range(1, 201):
         for k, (row, bound) in enumerate(zip(matrix, bounds)):
             shifted = vector+corrections[k]
             projected = shifted + max(0., bound-row@shifted)/(row@row)*row
@@ -95,6 +113,15 @@ def safe_velocity(positions, nominal, people, room, dt, limits):
         residual = np.max(bounds-matrix@vector, initial=0.)
         if residual <= 1e-9:
             velocity = vector.reshape(n, 2)
-            if is_safe(path_clearances(positions, positions+dt*velocity, people, room), limits):
-                return velocity
-    raise ValueError('SAFETY_INFEASIBLE: velocity projection failed')
+            checked = path_clearances(positions, positions+dt*velocity, people, room)
+            if is_safe(checked, limits):
+                return SafetyResult(velocity, 'SOLVED', float(residual), iteration,
+                    float(np.linalg.norm(velocity-nominal)), float(min(v for v in checked.values() if v is not None)),
+                    perf_counter()-started, False)
+    # A stopped single-integrator is safe whenever the current state is safe.
+    stopped = np.zeros_like(nominal); checked = path_clearances(positions, positions, people, room)
+    if is_safe(checked, limits):
+        return SafetyResult(stopped, 'NUMERICAL_FALLBACK', float(np.max(bounds-matrix@vector, initial=0.)),
+            200, float(np.linalg.norm(nominal)), float(min(v for v in checked.values() if v is not None)),
+            perf_counter()-started, True)
+    raise ValueError('NUMERICAL_FAILURE: projection failed and stopped fallback is unsafe')
