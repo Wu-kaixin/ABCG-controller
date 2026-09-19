@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="460" viewBox="0 0 1280 460" role="img" aria-labelledby="title desc">
+  <title id="title">ABCG Controller</title>
+  <desc id="desc">Guide agents forming a safe deployment ring around a static crowd.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="0.55" stop-color="#0c2030"/>
+      <stop offset="1" stop-color="#123348"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#30d5c8"/>
+      <stop offset="1" stop-color="#55a8ff"/>
+    </linearGradient>
+    <radialGradient id="crowd" cx="50%" cy="45%" r="65%">
+      <stop offset="0" stop-color="#ffca75"/>
+      <stop offset="1" stop-color="#f08b55"/>
+    </radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#a6d5e8" stroke-opacity="0.055"/>
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="460" rx="28" fill="url(#bg)"/>
+  <rect width="1280" height="460" rx="28" fill="url(#grid)"/>
+  <circle cx="1060" cy="30" r="240" fill="#34d7c8" opacity="0.035"/>
+  <circle cx="1180" cy="410" r="280" fill="#4d9fff" opacity="0.04"/>
+
+  <g transform="translate(825 230)">
+    <path d="M-174-1C-169-105-96-167 8-169c106-1 178 63 181 164 3 103-72 175-177 177-105 2-181-68-186-173Z"
+          fill="#07131f" fill-opacity="0.72" stroke="url(#line)" stroke-width="4" stroke-dasharray="7 9"/>
+    <path d="M-121 2c4-69 55-113 126-114 73-1 125 44 127 111 2 68-52 116-124 117-72 1-126-46-129-114Z"
+          fill="#f29a5f" fill-opacity="0.09" stroke="#f5ab69" stroke-opacity="0.42" stroke-width="2"/>
+
+    <g fill="url(#crowd)" opacity="0.94">
+      <circle cx="-70" cy="-38" r="12"/><circle cx="-39" cy="-70" r="10"/>
+      <circle cx="-30" cy="-24" r="13"/><circle cx="8" cy="-58" r="12"/>
+      <circle cx="43" cy="-31" r="11"/><circle cx="78" cy="-53" r="10"/>
+      <circle cx="88" cy="-8" r="13"/><circle cx="54" cy="8" r="12"/>
+      <circle cx="24" cy="38" r="13"/><circle cx="68" cy="53" r="11"/>
+      <circle cx="-12" cy="72" r="12"/><circle cx="-48" cy="44" r="11"/>
+      <circle cx="-88" cy="34" r="13"/><circle cx="-75" cy="0" r="11"/>
+      <circle cx="-9" cy="3" r="14"/><circle cx="29" cy="-8" r="10"/>
+    </g>
+
+    <g fill="#58acff" stroke="#d5edff" stroke-width="2" filter="url(#glow)">
+      <circle cx="-171" cy="-17" r="8"/><circle cx="-144" cy="-93" r="8"/>
+      <circle cx="-82" cy="-150" r="8"/><circle cx="3" cy="-169" r="8"/>
+      <circle cx="88" cy="-148" r="8"/><circle cx="151" cy="-91" r="8"/>
+      <circle cx="188" cy="-9" r="8"/><circle cx="161" cy="78" r="8"/>
+      <circle cx="101" cy="142" r="8"/><circle cx="15" cy="171" r="8"/>
+      <circle cx="-76" cy="153" r="8"/><circle cx="-141" cy="96" r="8"/>
+    </g>
+
+    <g stroke="#51d6c8" stroke-opacity="0.28" stroke-width="1.5">
+      <path d="M-171-17-113-13"/><path d="M-144-93-96-64"/>
+      <path d="M-82-150-53-105"/><path d="M3-169 4-113"/>
+      <path d="M88-148 57-104"/><path d="M151-91 105-62"/>
+      <path d="M188-9 132-5"/><path d="M161 78 112 55"/>
+      <path d="M101 142 65 99"/><path d="M15 171 10 117"/>
+      <path d="M-76 153-48 108"/><path d="M-141 96-96 66"/>
+    </g>
+  </g>
+
+  <g font-family="Inter,Segoe UI,Arial,sans-serif">
+    <rect x="72" y="70" width="146" height="34" rx="17" fill="#2ed0c1" fill-opacity="0.13" stroke="#48d8ca" stroke-opacity="0.55"/>
+    <circle cx="92" cy="87" r="5" fill="#48d8ca"/>
+    <text x="106" y="92" font-size="13" font-weight="700" letter-spacing="1.1" fill="#76eadf">STEP 1 CLOSED</text>
+
+    <text x="70" y="181" font-size="66" font-weight="800" letter-spacing="-2" fill="#f4fbff">ABCG</text>
+    <text x="70" y="242" font-size="58" font-weight="300" letter-spacing="3" fill="#b9d8e8">CONTROLLER</text>
+    <rect x="72" y="270" width="430" height="3" rx="1.5" fill="url(#line)"/>
+    <text x="72" y="315" font-size="20" fill="#d3e5ee">Auditable guide-agent deployment</text>
+    <text x="72" y="347" font-size="20" fill="#8fb6c8">for crowd containment research</text>
+    <text x="72" y="400" font-size="13" letter-spacing="0.8" fill="#6f9aac">REPRODUCIBLE · SAFETY-AWARE · INDEPENDENTLY EVALUATED</text>
+  </g>
+</svg>
