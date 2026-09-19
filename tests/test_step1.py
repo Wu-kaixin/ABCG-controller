@@ -133,6 +133,15 @@ def test_initialization_failure_is_structured(tmp_path):
     assert not result['success']
     assert {'metrics.json','trajectory.npz','state.json'} <= {p.name for p in output.iterdir()}
     assert (output/'state.json').read_text().find('completed')>=0
+    assert 'task_request_sha256' in result and result['input_snapshot_sha256'] is None
+
+
+def test_jupedsim_capacity_failure_is_not_an_experiment_error(tmp_path):
+    cfg=load_config(ROOT/'configs/step1/scenarios/opposite_side.yaml',seed=1)
+    result=experiment(write_config(tmp_path,cfg),tmp_path/'crowded',plots=False)
+    assert result['termination_status']=='INITIALIZATION_INVALID'
+    assert result['failure_stage']=='initialization'
+    assert 'could be placed' in result['failure_reason']
 
 
 def test_fixed_n_resume_hash_and_saved_trajectory_reevaluation(tmp_path):

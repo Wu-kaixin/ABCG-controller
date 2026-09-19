@@ -1,5 +1,6 @@
 """JuPedSim static crowd and independent guide initialization."""
 import jupedsim as jps
+from jupedsim.distributions import AgentNumberError
 import numpy as np
 from shapely.geometry import Polygon
 
@@ -30,11 +31,15 @@ class Environment:
         if not polygon.is_valid or polygon.area <= 0 or not self.scene.polygon.covers(polygon):
             raise ValueError('Crowd spawn polygon must be valid and inside the scene')
         radius = float(self._radii.max())
-        self._positions = np.asarray(jps.distribute_by_number(
-            polygon=polygon, number_of_agents=count,
-            distance_to_agents=max(raw['spacing'], 2*radius),
-            distance_to_polygon=radius, seed=seed,
-        ), dtype=float)
+        try:
+            generated = jps.distribute_by_number(
+                polygon=polygon, number_of_agents=count,
+                distance_to_agents=max(raw['spacing'], 2*radius),
+                distance_to_polygon=radius, seed=seed,
+            )
+        except AgentNumberError as error:
+            raise ValueError(f'INITIALIZATION_INVALID: {error}') from error
+        self._positions = np.asarray(generated, dtype=float)
         if self._positions.shape != (count, 2) or not np.isfinite(self._positions).all():
             raise ValueError('JuPedSim could not generate the requested crowd')
         for data in [self._positions, self._radii, self._demand]:

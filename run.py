@@ -120,13 +120,13 @@ def _git_value(*args):
 
 
 def _provenance(config, observation, protocol, fixed_n):
-    raw = np.ascontiguousarray(np.c_[
+    raw = (None if observation is None else np.ascontiguousarray(np.c_[
         observation.positions, observation.radii, observation.demand
-    ]).tobytes()
+    ]).tobytes())
     config_hash = hashlib.sha256(
         yaml.safe_dump(config, sort_keys=True).encode()
     ).hexdigest()
-    input_hash = hashlib.sha256(raw).hexdigest()
+    input_hash = None if raw is None else hashlib.sha256(raw).hexdigest()
     source = hashlib.sha256()
     source_paths = [
         Path(__file__), Path(__file__).with_name('evaluator.py'),
@@ -142,9 +142,10 @@ def _provenance(config, observation, protocol, fixed_n):
     patch_hash = hashlib.sha256(
         (_git_value('git', 'diff', '--binary') or '').encode()
     ).hexdigest()
-    task_hash = hashlib.sha256(
-        f'{commit}:{source_hash}:{config_hash}:{input_hash}:{protocol}:{fixed_n}'.encode()
+    request_hash = hashlib.sha256(
+        f'{commit}:{source_hash}:{config_hash}:{protocol}:{fixed_n}'.encode()
     ).hexdigest()
+    task_hash = hashlib.sha256(f'{request_hash}:{input_hash}'.encode()).hexdigest()
     dependencies = {
         name: importlib.metadata.version(name)
         for name in ['numpy', 'scipy', 'shapely', 'PyYAML', 'jupedsim']
@@ -156,6 +157,7 @@ def _provenance(config, observation, protocol, fixed_n):
         'source_sha256': source_hash,
         'input_snapshot_sha256': input_hash,
         'config_sha256': config_hash,
+        'task_request_sha256': request_hash,
         'task_sha256': task_hash,
         'python': platform.python_version(), 'platform': platform.platform(),
         'dependencies': dependencies,
@@ -209,6 +211,21 @@ def _resume_result(output, task_hash):
     return None
 
 
+def _resume_initialization_failure(output, request_hash):
+    if not RESULT_FILES.issubset({path.name for path in output.iterdir()}):
+        return None
+    try:
+        state = json.loads((output / 'state.json').read_text(encoding='utf-8'))
+        metrics = json.loads((output / 'metrics.json').read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+    if (state.get('status') == 'completed'
+            and metrics.get('failure_stage') == 'initialization'
+            and metrics.get('task_request_sha256') == request_hash):
+        return metrics
+    return None
+
+
 def experiment(config_path, output, seed=None, plots=True,
                protocol='adaptive_resource', fixed_n=None, resume=False,
                method=None):
@@ -240,6 +257,13 @@ def experiment(config_path, output, seed=None, plots=True,
             if method not in METHODS:
                 raise ValueError(f'Invalid method override: {method}')
             config['controller']['method'] = method
+        provenance = _provenance(config, None, protocol, fixed_n)
+        if resume and any(output.iterdir()):
+            result = _resume_initialization_failure(
+                output, provenance['task_request_sha256']
+            )
+            if result is not None:
+                return result
         env = Environment(config)
         observation = env.observe()
         initial = env.initialize_guides(config['guides'])
@@ -356,8 +380,15 @@ def experiment(config_path, output, seed=None, plots=True,
     attempts = controller.attempts if controller is not None else []
     boundary = controller.boundary if controller is not None else None
     plan = controller.plan if controller is not None else None
+    provenance_fields = {
+        'commit': None, 'dirty': None, 'patch_sha256': None,
+        'source_sha256': None, 'input_snapshot_sha256': None,
+        'config_sha256': None, 'task_request_sha256': None,
+        'task_sha256': None, 'python': platform.python_version(),
+        'platform': platform.platform(), 'dependencies': None,
+    }
     metrics = {
-        'schema_version': '1.1.0', **provenance,
+        'schema_version': '1.1.0', **(provenance_fields | provenance),
         'scene': scene_name, 'method': method_name, 'protocol': protocol,
         'fixed_n': fixed_n, 'seed': seed_value,
         'termination_status': termination, 'motion_status': motion_status,

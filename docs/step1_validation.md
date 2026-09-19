@@ -4,12 +4,14 @@
 
 ## 冻结前检查
 
-- 测试：26/26 PASS。
+- 测试：27/27 PASS。
 - 11 场景 × 4 方法 × 2 协议 × seed 0 smoke：88/88 completed，0 experiment error，59 SUCCESS、13 `PLAN_SEARCH_EXHAUSTED`、8 `CAPACITY_SHORTFALL`、8 `OFFSET_INVALID`。
 - 两个确定性失败夹具的 16 个任务全部命中预先规定原因；随机方法失败被保留，没有删 seed 或放宽阈值。
 - 从保存轨迹独立重评估：88/88 与原始 success 一致。
 
 smoke 结果位于本地 `results/closure-smoke-v2/`，提交内摘要为 `experiments/smoke_summary.json`。开发 seeds 0–29 和最终未用于调参的 seeds 30–129 矩阵将在代码冻结后运行；运行前本报告保持 **PARTIAL**，不预写 CLOSED。
+
+首次冻结后的 development 运行出现 192 个 JuPedSim `AgentNumberError` experiment error。失败结果保留在 `results/closure-development/`；修复将已知生成人群容量失败转换为带 traceback cause 的结构化 `INITIALIZATION_INVALID`，同时为初始化失败增加 request hash resume 和回归测试。依照冻结协议，旧轮不被覆盖，代码版本升级后使用新目录重跑。
 
 ## G1–G12 当前状态
 

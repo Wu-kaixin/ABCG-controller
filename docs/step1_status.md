@@ -12,9 +12,10 @@
 
 ## 当前证据检查点
 
-- 单元/集成/反例测试：26/26 PASS。
+- 单元/集成/反例测试：27/27 PASS。
 - manifest smoke：88/88 completed，0 experiment error，88/88 expected status 命中；59 SUCCESS、13 PLAN_SEARCH_EXHAUSTED、8 CAPACITY_SHORTFALL、8 OFFSET_INVALID。
 - smoke 离线重评估：88/88 与原始 success 判定一致。
+- 首次 development 矩阵保留在 `results/closure-development/`：2176 中 192 个 JuPedSim `AgentNumberError` 被 runner 正确记为 EXPERIMENT_ERROR，暴露初始化依赖异常未结构化的问题；修复后该异常统一为 `INITIALIZATION_INVALID`，并增加回归测试。该失败轮不作为最终证据。
 - smoke 证据目录：`results/closure-smoke-v2/`（gitignore 下的本地结果）；可提交摘要为 `experiments/smoke_summary.json`。
 - 开发矩阵与最终 seeds 30–129 矩阵的结论记录在 `docs/step1_validation.md`；在最终矩阵完成前状态仍为 PARTIAL。
 
