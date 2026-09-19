@@ -293,7 +293,7 @@ def experiment(config_path, output, seed=None, plots=True,
         controller.prepare(observation, initial)
         failure_stage = 'execution'
         termination = 'TIMEOUT'
-        progress = [float(controller.remaining_path_lengths(initial).sum())]
+        progress = [float(controller.remaining_path_lengths(initial).mean())]
         for step in range(sim['max_steps']):
             requested, result = controller.step(env.observe(), positions[-1], sim['dt'])
             next_position = positions[-1] + sim['dt'] * result.velocity
@@ -314,7 +314,7 @@ def experiment(config_path, output, seed=None, plots=True,
                 for key, value in asdict(result).items() if key != 'velocity'
             })
             errors = controller.errors(next_position)
-            progress.append(float(controller.remaining_path_lengths(next_position).sum()))
+            progress.append(float(controller.remaining_path_lengths(next_position).mean()))
             settled = (np.all(errors <= control['position_tolerance'])
                        and np.max(np.linalg.norm(result.velocity, axis=1))
                        <= control['speed_tolerance'])
@@ -337,7 +337,7 @@ def experiment(config_path, output, seed=None, plots=True,
                     termination = 'REPLAN_EXHAUSTED'
                     failure_reason = 'Progress stalled and the finite recovery budget was exhausted'
                     break
-                progress = [float(controller.remaining_path_lengths(next_position).sum())]
+                progress = [float(controller.remaining_path_lengths(next_position).mean())]
     except ValueError as error:
         failure_reason = str(error)
         termination = _status_from_error(error, failure_stage)

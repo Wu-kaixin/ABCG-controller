@@ -79,6 +79,7 @@ def test_default_scene_runs(tmp_path, name):
     assert all(metrics['criteria'].values())
     assert metrics['steps'] > 10
     assert metrics['tracking_rmse'] < .03
+    assert metrics['replan_count'] == 0
     trace = np.load(tmp_path/name/'trajectory.npz')
     assert len(trace['positions']) == len(trace['safe_velocity'])+1
 
@@ -142,6 +143,16 @@ def test_jupedsim_capacity_failure_is_not_an_experiment_error(tmp_path):
     assert result['termination_status']=='INITIALIZATION_INVALID'
     assert result['failure_stage']=='initialization'
     assert 'could be placed' in result['failure_reason']
+
+
+def test_stall_runs_all_recovery_stages_then_stops(tmp_path):
+    cfg=config(); cfg['guides']['max_speed']=.001; cfg['simulation']['max_steps']=100
+    result=experiment(write_config(tmp_path,cfg),tmp_path/'stall',plots=False)
+    assert result['termination_status']=='REPLAN_EXHAUSTED'
+    assert result['replan_count']==3
+    assert [event['strategy'] for event in result['deadlock_events']] == [
+        'path_recompute','reachable_reassignment','priority_yield','exhausted']
+    assert result['criteria']['safety_ok']
 
 
 def test_fixed_n_resume_hash_and_saved_trajectory_reevaluation(tmp_path):

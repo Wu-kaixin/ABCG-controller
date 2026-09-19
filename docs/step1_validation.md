@@ -15,6 +15,8 @@ smoke 结果位于本地 `results/closure-smoke-v2/`，提交内摘要为 `exper
 
 修复后的 `results/closure-development-v2/` 共 2176 个任务：2176 completed、0 experiment error、1630 SUCCESS、338 PLAN_SEARCH_EXHAUSTED、192 INITIALIZATION_INVALID、8 CAPACITY_SHORTFALL、8 OFFSET_INVALID；2176/2176 离线重评估一致。development 中 square 的 12 个随机规划失败表明“所有随机 square seed 必须成功”是未经证明的假设，因此在查看最终 seeds 之前将该随机预期改为不预设结果；确定性 square seed 0 仍由测试严格要求 SUCCESS，失败夹具预期不变。算法、阈值和 final seeds 均未据此调整。
 
+首次 final 运行完成 7216 个任务且 7216 个离线重评估一致，但在文档收口前新增的强制停滞验收发现进展量使用总剩余路径、容差却是单 guide 单位，可能让多 guide 的极慢运动掩盖停滞。该轮保留于 `results/closure-validation/` 并标记为失效验证；修复改用 active guide 平均剩余路径进展，新增实际触发“路径重算→重分配→优先级让行→耗尽”的集成测试。最终结论必须来自升级版本的新目录。
+
 ## G1–G12 当前状态
 
 | Gate | 状态 | 证据 |
