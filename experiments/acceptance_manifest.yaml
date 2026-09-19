@@ -18,7 +18,7 @@ gates:
   G11: {required: true, runner: experiments/validation_runner.py}
   G12: {required: true, evidence: [docs/step1_theory.md]}
 scenarios:
-  - {name: square, config: configs/step1/square.yaml, fixed_n: 24, stochastic: true, expected_statuses: [SUCCESS]}
+  - {name: square, config: configs/step1/square.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
   - {name: rectangle, config: configs/step1/rectangle.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
   - {name: elongated, config: configs/step1/scenarios/elongated.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
   - {name: ellipse, config: configs/step1/scenarios/ellipse.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}

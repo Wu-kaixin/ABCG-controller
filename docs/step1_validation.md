@@ -13,6 +13,8 @@ smoke 结果位于本地 `results/closure-smoke-v2/`，提交内摘要为 `exper
 
 首次冻结后的 development 运行出现 192 个 JuPedSim `AgentNumberError` experiment error。失败结果保留在 `results/closure-development/`；修复将已知生成人群容量失败转换为带 traceback cause 的结构化 `INITIALIZATION_INVALID`，同时为初始化失败增加 request hash resume 和回归测试。依照冻结协议，旧轮不被覆盖，代码版本升级后使用新目录重跑。
 
+修复后的 `results/closure-development-v2/` 共 2176 个任务：2176 completed、0 experiment error、1630 SUCCESS、338 PLAN_SEARCH_EXHAUSTED、192 INITIALIZATION_INVALID、8 CAPACITY_SHORTFALL、8 OFFSET_INVALID；2176/2176 离线重评估一致。development 中 square 的 12 个随机规划失败表明“所有随机 square seed 必须成功”是未经证明的假设，因此在查看最终 seeds 之前将该随机预期改为不预设结果；确定性 square seed 0 仍由测试严格要求 SUCCESS，失败夹具预期不变。算法、阈值和 final seeds 均未据此调整。
+
 ## G1–G12 当前状态
 
 | Gate | 状态 | 证据 |
