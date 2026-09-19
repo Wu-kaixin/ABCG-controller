@@ -1,0 +1,31 @@
+schema_version: 1
+frozen_protocol:
+  development_seeds: [0, 29]
+  validation_seeds: [30, 129]
+  methods: [equal_arc, average_cvt, mass_cvt, distmesh]
+  protocols: [fixed_n, adaptive_resource]
+gates:
+  G1: {required: true, evidence: [pyproject.toml, run.py]}
+  G2: {required: true, tests: [tests/test_step1.py, tests/test_acceptance.py]}
+  G3: {required: true, tests: [tests/test_step1.py]}
+  G4: {required: true, tests: [tests/test_acceptance.py]}
+  G5: {required: true, tests: [tests/test_acceptance.py]}
+  G6: {required: true, tests: [tests/test_step1.py, tests/test_acceptance.py]}
+  G7: {required: true, tests: [tests/test_acceptance.py]}
+  G8: {required: true, tests: [tests/test_acceptance.py]}
+  G9: {required: true, status: not_fully_implemented}
+  G10: {required: true, tests: [tests/test_step1.py]}
+  G11: {required: true, status: final_matrix_not_run}
+  G12: {required: true, evidence: [docs/step1_theory.md]}
+scenarios:
+  - square
+  - rectangle
+  - elongated
+  - ellipse
+  - concave_points
+  - off_center
+  - high_demand_side
+  - near_wall_feasible
+  - near_wall_invalid
+  - insufficient_guides
+  - opposite_side

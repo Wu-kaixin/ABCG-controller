@@ -24,7 +24,7 @@ def plot_result(env, trajectory, controller, metrics, path):
     ax.scatter(*trajectory[-1].T, marker='^', color='#3778bf', label='Final guides')
     if controller.plan is not None:
         ax.scatter(*controller.plan.positions.T, marker='+', color='#159a8c', label='Targets')
-    ax.set(aspect='equal', xlabel='x [m]', ylabel='y [m]', title=f"{env.scene.name} | {metrics['status']}")
+    ax.set(aspect='equal', xlabel='x [m]', ylabel='y [m]', title=f"{env.scene.name} | {metrics['termination_status']}")
     ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1), fontsize=8)
     ax.grid(alpha=.15)
     fig.savefig(path, dpi=150)

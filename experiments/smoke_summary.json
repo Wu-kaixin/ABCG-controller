@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "runs": 8,
+  "passed": 7,
+  "failed": 1,
+  "not_run": 0,
+  "results": [
+    {
+      "scene": "rectangle",
+      "method": "average_cvt",
+      "seed": 0,
+      "termination_status": "SUCCESS",
+      "success": true,
+      "active_guides": 24,
+      "steps": 91,
+      "planned_max_gap": 1.9393652118750069,
+      "actual_max_gap": 1.9393124123503647,
+      "max_tracking_error": 0.0033571012410451135,
+      "fallback_count": 0
+    },
+    {
+      "scene": "rectangle",
+      "method": "distmesh",
+      "seed": 0,
+      "termination_status": "PLAN_SEARCH_EXHAUSTED",
+      "success": false,
+      "active_guides": 0,
+      "steps": 0,
+      "planned_max_gap": null,
+      "actual_max_gap": null,
+      "max_tracking_error": null,
+      "fallback_count": 0
+    },
+    {
+      "scene": "rectangle",
+      "method": "equal_arc",
+      "seed": 0,
+      "termination_status": "SUCCESS",
+      "success": true,
+      "active_guides": 24,
+      "steps": 90,
+      "planned_max_gap": 1.8976686309538662,
+      "actual_max_gap": 1.8984455894398238,
+      "max_tracking_error": 0.003910795783426347,
+      "fallback_count": 0
+    },
+    {
+      "scene": "rectangle",
+      "method": "mass_cvt",
+      "seed": 0,
+      "termination_status": "SUCCESS",
+      "success": true,
+      "active_guides": 28,
+      "steps": 94,
+      "planned_max_gap": 1.9325741562891223,
+      "actual_max_gap": 1.932745844684164,
+      "max_tracking_error": 0.003479374445178759,
+      "fallback_count": 0
+    },
+    {
+      "scene": "square",
+      "method": "average_cvt",
+      "seed": 0,
+      "termination_status": "SUCCESS",
+      "success": true,
+      "active_guides": 20,
+      "steps": 78,
+      "planned_max_gap": 1.8982914725286069,
+      "actual_max_gap": 1.8975091645655482,
+      "max_tracking_error": 0.003661335552941895,
+      "fallback_count": 0
+    },
+    {
+      "scene": "square",
+      "method": "distmesh",
+      "seed": 0,
+      "termination_status": "SUCCESS",
+      "success": true,
+      "active_guides": 24,
+      "steps": 86,
+      "planned_max_gap": 1.9178129515977442,
+      "actual_max_gap": 1.9158769612675535,
+      "max_tracking_error": 0.003624930946935969,
+      "fallback_count": 0
+    },
+    {
+      "scene": "square",
+      "method": "equal_arc",
+      "seed": 0,
+      "termination_status": "SUCCESS",
+      "success": true,
+      "active_guides": 20,
+      "steps": 78,
+      "planned_max_gap": 1.8660700618986668,
+      "actual_max_gap": 1.8665943344188562,
+      "max_tracking_error": 0.0036723107391540928,
+      "fallback_count": 0
+    },
+    {
+      "scene": "square",
+      "method": "mass_cvt",
+      "seed": 0,
+      "termination_status": "SUCCESS",
+      "success": true,
+      "active_guides": 24,
+      "steps": 86,
+      "planned_max_gap": 1.8678245294432028,
+      "actual_max_gap": 1.8670812339547265,
+      "max_tracking_error": 0.00344300961428744,
+      "fallback_count": 0
+    }
+  ]
+}
