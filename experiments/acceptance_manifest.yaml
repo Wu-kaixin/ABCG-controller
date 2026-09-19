@@ -1,7 +1,7 @@
 schema_version: 2
 frozen_protocol:
   development_seeds: [0, 29]
-  validation_seeds: [130, 229]
+  validation_seeds: [230, 329]
   methods: [equal_arc, average_cvt, mass_cvt, distmesh]
   protocols: [fixed_n, adaptive_resource]
 gates:
@@ -26,6 +26,6 @@ scenarios:
   - {name: off_center, config: configs/step1/scenarios/off_center.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
   - {name: high_demand_side, config: configs/step1/scenarios/high_demand_side.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
   - {name: near_wall_feasible, config: configs/step1/scenarios/near_wall_feasible.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}
-  - {name: near_wall_invalid, config: configs/step1/scenarios/near_wall_invalid.yaml, fixed_n: 24, stochastic: false, expected_statuses: [OFFSET_INVALID]}
-  - {name: insufficient_guides, config: configs/step1/scenarios/insufficient_guides.yaml, fixed_n: 24, stochastic: false, expected_statuses: [CAPACITY_SHORTFALL]}
+  - {name: near_wall_invalid, config: configs/step1/scenarios/near_wall_invalid.yaml, fixed_n: 24, stochastic: false, seed: 0, expected_statuses: [OFFSET_INVALID]}
+  - {name: insufficient_guides, config: configs/step1/scenarios/insufficient_guides.yaml, fixed_n: 24, stochastic: false, seed: 0, expected_statuses: [CAPACITY_SHORTFALL]}
   - {name: opposite_side, config: configs/step1/scenarios/opposite_side.yaml, fixed_n: 24, stochastic: true, expected_statuses: null}

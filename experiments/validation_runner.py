@@ -50,6 +50,8 @@ def load_manifest(path):
             raise ValueError(f'Missing scenario config: {config}')
         if type(item['fixed_n']) is not int or item['fixed_n'] < 3:
             raise ValueError('fixed_n must be an integer >= 3')
+        if not item['stochastic'] and (type(item.get('seed')) is not int or item['seed'] < 0):
+            raise ValueError('Deterministic scenarios require an explicit nonnegative seed')
     return manifest
 
 
@@ -60,7 +62,7 @@ def build_tasks(manifest, output, phase, smoke=False):
         seeds = seeds[:1]
     tasks = []
     for scenario in manifest['scenarios']:
-        scenario_seeds = seeds if scenario['stochastic'] else seeds[:1]
+        scenario_seeds = seeds if scenario['stochastic'] else [scenario['seed']]
         for seed in scenario_seeds:
             for method in frozen['methods']:
                 for protocol in frozen['protocols']:

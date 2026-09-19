@@ -13,6 +13,7 @@ from controller.safety import Safety
 from environment import Environment
 from evaluator import evaluate
 from run import load_config
+from experiments.validation_runner import build_tasks, load_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -116,3 +117,12 @@ def test_recovery_sequence_is_finite_and_uses_three_distinct_strategies():
     assert [controller.recover(observation,guides) for _ in range(4)] == [
         'path_recompute','reachable_reassignment','priority_yield',None]
     assert controller.priority_mode
+
+
+def test_manifest_keeps_deterministic_fixture_seed_fixed(tmp_path):
+    manifest=load_manifest(ROOT/'experiments/acceptance_manifest.yaml')
+    tasks=build_tasks(manifest,tmp_path,'validation',smoke=True)
+    deterministic=[task for task in tasks if task['scenario'] in {
+        'near_wall_invalid','insufficient_guides'}]
+    assert len(deterministic)==16
+    assert {task['seed'] for task in deterministic}=={0}
