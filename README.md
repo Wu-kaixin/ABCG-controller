@@ -17,6 +17,7 @@
 
 <p align="center">
   <a href="#-快速开始">快速开始</a> ·
+  <a href="#-可视化生成与回放">可视化</a> ·
   <a href="#-系统架构">系统架构</a> ·
   <a href="#-方法与协议">方法与协议</a> ·
   <a href="#-验证证据">验证证据</a> ·
@@ -85,14 +86,57 @@ python run.py --config configs/step1/square.yaml --output results/quickstart
 
 </details>
 
-重新验证或绘制已经保存的结果：
+一次运行会在 `--output` 目录写入可回放的证据包。默认还会生成 `scene.png`。
+
+## 🎥 可视化：生成与回放
+
+实验结果和实时演示是分开的。`run.py` 负责落盘；`live_demo.py` 负责并排看仿真；已经保存的目录用 `visualization.py` 和 `--reevaluate` 回放，不必重跑控制器。
+
+### 生成文件
+
+| 产物 | 命令 |
+|---|---|
+| 单次实验（JSON / NPZ / YAML / `scene.png`） | `python run.py --config configs/step1/square.yaml --output results/quickstart` |
+| 只要轨迹、不要图 | 追加 `--no-plots` |
+| 多 seed 批量 | `python run.py --config configs/step1/square.yaml --output results/batch --seeds 0 1 2 3 4 --workers auto` |
+| 实时四宫格（当前屏幕最大化） | `python live_demo.py` |
+| 六组场景同时演示 | `python live_demo.py --all` |
+| 指定场景 | `python live_demo.py --cases square,ellipse,off_center` |
+| 静态对比 PNG | `python live_demo.py --all --snapshot results/live_demo.png` |
+| 动画 GIF | `python live_demo.py --all --gif results/live_demo_all.gif` |
+
+`live_demo.py` 内置场景：`square`、`rectangle`、`ellipse`、`off_center`、`elongated`、`high_demand`。窗口在鼠标所在显示器最大化；空格暂停，`F11` 全屏，`Q` 关闭。`--stride` 控制每帧推进的仿真步数，`--interval` 控制 GIF/动画帧间隔（毫秒）。
+
+每个实验输出目录包含：
+
+| 文件 | 内容 |
+|---|---|
+| `config.yaml` | 实际使用的 Step 1 配置快照 |
+| `trajectory.npz` | 时间、guide 轨迹、人群、边界、目标和 assignment |
+| `metrics.json` | 终止状态、九类 criteria、安全与规划诊断、task hash |
+| `planning.json` | 有界覆盖搜索的逐候选记录 |
+| `state.json` | 原子完成标记，供 `--resume` 使用 |
+| `scene.png` | 运行结束时的场景图（除非 `--no-plots`） |
+
+### 回放文件
+
+不重新仿真，只读已经保存的证据：
 
 ```bash
+# 从 trajectory.npz 重算九类验收条件
 python run.py --reevaluate results/quickstart
+
+# 从保存轨迹重绘场景图（可另存）
 python visualization.py --result results/quickstart
+python visualization.py --result results/quickstart --output results/quickstart/scene_from_saved.png
 ```
 
-输出目录包含输入快照、严格 JSON 指标、规划历史、原子状态、无 pickle 的 NPZ 轨迹和可选场景图。
+GIF 和实时窗口是演示产物，不能代替实验回放。要复查一次实验，使用上面的 `--reevaluate` 和 `visualization.py --result`。批量结果可以：
+
+```bash
+python experiments/validation_runner.py --output results/validation --reevaluate
+python experiments/validation_runner.py --output results/validation --plot-only
+```
 
 ## 🧠 系统架构
 
@@ -231,6 +275,10 @@ Step 2 仍保持全局观测和无限通信；局部观测与邻居通信属于 
   <tr>
     <td><a href="evaluator.py"><strong>evaluator.py</strong></a><br /><sub>与 controller 解耦的轨迹验收</sub></td>
     <td><a href="run.py"><strong>run.py</strong></a><br /><sub>单次、批量、resume 与复判入口</sub></td>
+  </tr>
+  <tr>
+    <td><a href="live_demo.py"><strong>live_demo.py</strong></a><br /><sub>多场景实时对照、PNG 与 GIF</sub></td>
+    <td><a href="visualization.py"><strong>visualization.py</strong></a><br /><sub>从已保存轨迹重绘场景</sub></td>
   </tr>
 </table>
 
